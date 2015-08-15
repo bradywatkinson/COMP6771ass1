@@ -13,7 +13,7 @@
 #include <ctype.h>
 
 #define DEBUG false
-#define REPEAT false
+#define REPEAT true
 
 struct number {
 	double value;
@@ -86,7 +86,7 @@ void parseLine (std::string tmpStr) {
 		y = calc.front();
 		calc.pop_front();
 		tmpNum.isInt = x.isInt && y.isInt;
-		tmpNum.value = x.value - y.value;
+		tmpNum.value = y.value - x.value;
 		calc.push_front(tmpNum);
 		//if (DEBUG) std::cout << "after sub: " << x.value << " " << y.value << " " << tmpNum.value << std::endl;
 		std::cout << (x.isInt ? std::to_string(int(x.value)) : to_double_string(x.value))
@@ -156,16 +156,25 @@ void parseLine (std::string tmpStr) {
 		std::string nextCommands = "";
 		if (DEBUG || REPEAT) std::cout << "repeating " << tmpNum.value << " times " << std::endl;
 
-		// keep accepting input until we find an endrepeat
+		int innerRepeats = 0;
+		bool innerRepeatFound = false;
 		while (in >> tmpStr) {
 			if (DEBUG || REPEAT) std::cout << "repeat received " << tmpStr << std::endl;
-			if (tmpStr.compare("endrepeat") == 0) {
-				if (DEBUG || REPEAT) std::cout << "begin repeat: " << nextCommands << std::endl;
-				for (int i=0;i<repeat;++i) {
-					splitLine(nextCommands);
+			if (tmpStr.compare("repeat") == 0) {
+				++innerRepeats;
+				innerRepeatFound = true;
+			} else if (tmpStr.compare("endrepeat") == 0) {
+				if (innerRepeats > 0) {
+					if (DEBUG || REPEAT) std::cout << "found inner repeat " << innerRepeats << std::endl;
+					--innerRepeats;
+				} else {
+					if (DEBUG || REPEAT) std::cout << "begin repeat: " << nextCommands << std::endl;
+					for (int i=0;i<repeat;++i) {
+						splitLine(nextCommands);
+					}
+					if (DEBUG || REPEAT) std::cout << "end repeat"<< std::endl;
+					break;
 				}
-				if (DEBUG || REPEAT) std::cout << "end repeat"<< std::endl;
-				break;
 			} else {
 				nextCommands += tmpStr + " ";
 			} 
