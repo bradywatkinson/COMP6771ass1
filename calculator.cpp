@@ -47,6 +47,8 @@ void parseLine (std::string line) {
 	std::stringstream iss;
 	iss << line;
 
+	std::cout << "parseLine received: " << line << std::endl;
+
 	std::string tmpStr;
 	while (std::getline(iss,tmpStr,' ')) {
 		//its an integer
@@ -101,22 +103,22 @@ void parseLine (std::string line) {
 			y = calc.front();
 			calc.pop_front();
 			tmpNum.isInt = x.isInt && y.isInt;
-			tmpNum.value = y.value / x.value;
+			tmpNum.value = x.value / y.value;
 			calc.push_front(tmpNum);
 			std::cout << "after div: " << x.value << " " << y.value << " " << tmpNum.value << std::endl;
 		} else if (tmpStr.compare("sqrt") == 0) {
-			struct number x,y,tmpNum;
+			struct number x,tmpNum;
 			x = calc.front();
 			calc.pop_front();
 			tmpNum.isInt = x.isInt;
 			tmpNum.value = sqrt(x.value);
 			calc.push_front(tmpNum);
-			std::cout << "after sqrt: " << x.value << " " << y.value << " " << tmpNum.value << std::endl;
+			std::cout << "after sqrt: " << x.value << " " << tmpNum.value << std::endl;
 		} else if (tmpStr.compare("pop") == 0) {
 			struct number tmpNum;
 			tmpNum = calc.front();
 			calc.pop_front();
-			std::cout << "pop_frontping off: " << tmpNum.value << std::endl;
+			std::cout << "popping off: " << tmpNum.value << std::endl;
 		} else if (tmpStr.compare("reverse") == 0) {
 			struct number tmpNum;
 			tmpNum = calc.front();
@@ -134,17 +136,24 @@ void parseLine (std::string line) {
 			calc_new.splice (calc.begin(), calc, calc_new.begin(), calc_new.end());
 
 			std::cout << "reversing" << std::endl;
-		/*} else if (tmpStr.compare("repeat") == 0) {
+		} else if (tmpStr.compare("repeat") == 0) {
 			struct number tmpNum;
 			tmpNum = calc.front();
 			calc.pop_front();
 			int repeat = tmpNum.value;
 			std::string nextCommands = "";
-			std::cout << "repeating " << tmpNum.value << " times" << std::endl;
+			std::cout << "repeating " << tmpNum.value << " times " << line << std::endl;
+			//in >> line;
+			std::cout << "testing line " << line << std::endl;
+			std::cout << "testing tmpStr " << tmpStr << std::endl;
+			//nextCommands += 
+			//std::getline(iss,tmpStr);
 
+			std::cout << "the rest of tmpStr is " << tmpStr << std::endl;
 			while (in >> line) {
 				iss << line;
 				while (std::getline(iss,tmpStr,' ')) {
+					std::cout << "repeat received " << tmpStr << std::endl;
 					if (tmpStr.compare("endrepeat") == 0) {
 						for (int i=0;i<repeat;++i) {
 							parseLine(nextCommands);
@@ -154,12 +163,12 @@ void parseLine (std::string line) {
 					} else {
 						nextCommands += tmpStr + " ";
 					} 
-						
 				}
-				endRepeat:
 				iss.clear();
 			}
-		*/
+			endRepeat:
+			iss.clear();
+			//std::cout << "test" << std::endl;
 		} else {
 			std::cout << "|" << tmpStr << "|" << " not recognised" << std::endl;
 		}
